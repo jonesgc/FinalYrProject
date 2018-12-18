@@ -18,13 +18,37 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Font Include="..\..\OpenSans-Bold.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-BoldItalic.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-ExtraBold.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-ExtraBoldItalic.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-Italic.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-Light.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-LightItalic.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-Regular.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-Semibold.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="..\..\OpenSans-SemiboldItalic.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>

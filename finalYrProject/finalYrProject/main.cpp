@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 
-#include "GUI.h"
+void initGuiElem(tgui::Gui& gui);
 
 int main()
 {	
@@ -9,12 +10,10 @@ int main()
 	settings.antialiasingLevel = 8;
 
 	//Create window (x,y) with title and load the settings.
-	sf::RenderWindow window(sf::VideoMode(600, 600), "project", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(800, 800), "project", sf::Style::Default, settings);
 
-	GUI gui;
-	gui.initGUI();
-
-	
+	tgui::Gui gui{ window };
+	initGuiElem(gui);
 
 	//Program loop runs aslong as the window is open.
 	while (window.isOpen())
@@ -29,13 +28,23 @@ int main()
 				window.close();
 			}
 
+			gui.handleEvent(event);
 		}
 
 		//Recommended render loop for SFML.
 		window.clear();
-		window.draw(gui);
+		//window.draw();
+		gui.draw();
 		window.display();
 	}
 
 	return 0;
+}
+
+void initGuiElem(tgui::Gui & gui)
+{
+	tgui::Button::Ptr button = tgui::Button::create();
+	button->setSize({ "50%", "16.67" });
+	button->setPosition({ "25%", "70%" });
+	gui.add(button);
 }
