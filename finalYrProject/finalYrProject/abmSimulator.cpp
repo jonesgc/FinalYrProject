@@ -253,7 +253,7 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	}
 
 	
-	//Draw the interactables on the rendered Grid.
+	//Draw the interactables on the rendered Grid and since interactables are static we can put them on the environment grid.
 	for each(interactable inter in interactList)
 	{
 		float rX, rY = 0;
@@ -266,6 +266,9 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 		grid.append(sf::Vertex(sf::Vector2f(rX, rY+15), sf::Color::Magenta));
 		grid.append(sf::Vertex(sf::Vector2f(rX+15, rY+15), sf::Color::Magenta));
 		grid.append(sf::Vertex(sf::Vector2f(rX+15, rY), sf::Color::Magenta));
+
+		pair<unsigned int, unsigned int> curPos = inter.getPosition();
+		newEnvironment.changeTile(curPos.first, curPos.second, 2);
 		
 	}
 
@@ -306,7 +309,8 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 		
 		if (flag1 && flag2)
 		{
-			bresenhamLine(newEnvironment,stX, stY, etX, etY);
+			//2 is the obj code for terrain.
+			newEnvironment = bresenhamLine(newEnvironment,stX, stY, etX, etY, 1);
 			flag1, flag2 = false;
 		}
 	}
@@ -465,7 +469,7 @@ bool abmSimulator::isValidCell(int r, int c)
 
 //bresenham algorithm code adapted from: http://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C.2B.2B C++ section.
 //This was to avoid the reinventing the square wheel.
-void abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2)
+Environment abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, unsigned short objCode)
 {
 	// Bresenham's line algorithm
 	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
@@ -494,11 +498,11 @@ void abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigned int y
 	{
 		if (steep)
 		{
-			env.changeTile(y, x, 2);
+			env.changeTile(y, x, objCode);
 		}
 		else
 		{
-			env.changeTile(x, y, 2);
+			env.changeTile(x, y, objCode);
 		}
 
 		error -= dy;
@@ -508,17 +512,20 @@ void abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigned int y
 			error += dx;
 		}
 	}
+
+	return env;
 }
 
-pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent a, unsigned short objCode)
+//BFS adapted from https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/.
+pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent a, unsigned short oc)
 {
 	vector<vector<unsigned int>>gridImage = env.getEnvironmentGrid();
 	unsigned int row = env.getGridSize().first;
 	unsigned int col = env.getGridSize().second;
 	vector<tuple<pair<unsigned int, unsigned int>, pair<unsigned int, unsigned int>>> path;
 	pair<unsigned int, unsigned int> target;
-	//BFS adapted from https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/.
-
+	
+	unsigned short objCode = oc;
 	int rowNum[] = { -1, 0, 0, 1 };
 	int colNum[] = { 0, -1, 1, 0 };
 
@@ -557,7 +564,8 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 		pair<unsigned int, unsigned int> currCellPos = currCell.second;
 
 		//Look for the requested cell type.
-		if (gridImage[currCellPos.first][currCellPos.second] == objCode)
+		short gVal = gridImage[currCellPos.first][currCellPos.second];
+		if (gVal == 2)
 		{
 			//Found it.
 			target = std::make_pair(currCellPos.first, currCellPos.second);
@@ -571,7 +579,7 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 			int curRow = currCellPos.first + rowNum[i];
 			int curCol = currCellPos.second + colNum[i];
 
-			if (isValidCell(curRow, curCol) && (vistied[curRow][curCol] == false) && (gridImage[curRow][curCol] == 0))
+			if (isValidCell(curRow, curCol) && (vistied[curRow][curCol] == false) && (gridImage[curRow][curCol] != 1))
 			{
 				vistied[curRow][curCol] = true;
 				pair<int, pair<unsigned int, unsigned int>>adjacentCell = std::make_pair(currCell.first + 1, std::make_pair(curRow, curCol));
@@ -591,7 +599,8 @@ void abmSimulator::runSimulation()
 	long totalVertex = environment.getGridSize().first * environment.getGridSize().second;
 	unsigned int row = environment.getGridSize().first;
 	unsigned int col = environment.getGridSize().second;
-	vector<vector<unsigned int>> gridImage = environment.getEnvironmentGrid();
+	Environment eCopy = environment;	
+	vector<vector<unsigned int>> gridImage = eCopy.getEnvironmentGrid();
 
 	
 	//Cant run a simulation with no agents in.
@@ -606,9 +615,10 @@ void abmSimulator::runSimulation()
 		{
 			unsigned int x = a.getPosition().first;
 			unsigned int y = a.getPosition().second;
-			unsigned short objCode = 3; 
-			pair<unsigned int, unsigned int> target = BFSforCell(environment, a, objCode);
+			unsigned short objCode = 2; 
+			pair<unsigned int, unsigned int> target = BFSforCell(eCopy, a, objCode);
 
+			eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
 		}
 	}
 	

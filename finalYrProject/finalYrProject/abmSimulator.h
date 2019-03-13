@@ -50,7 +50,7 @@ public:
 
 	std::vector<sf::CircleShape>drawAgents();
 	bool isValidCell(int,int);
-	void bresenhamLine(Environment,unsigned int, unsigned int, unsigned int, unsigned int);
+	Environment bresenhamLine(Environment,unsigned int, unsigned int, unsigned int, unsigned int, unsigned short);
 	std::pair<unsigned int, unsigned int> BFSforCell(Environment, agent, unsigned short);
 
 private:
