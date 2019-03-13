@@ -619,6 +619,7 @@ void abmSimulator::runSimulation()
 	}
 	else
 	{
+		int count = 0;
 		//This update cycle is only for non-crowd agents. This function would need to be extended to work with crowds.
 		for each (agent a in localCont)
 		{
@@ -631,6 +632,7 @@ void abmSimulator::runSimulation()
 			eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
 			gridImage = eCopy.getEnvironmentGrid();
 
+			
 			//Scan around the agent looking for the path.
 			for (int i = 0; i <= 7; i++)
 			{
@@ -642,12 +644,13 @@ void abmSimulator::runSimulation()
 					//Clear the current tile.
 					environment.changeTile(x, y, 0);
 
-					//THIS IS NOT WORKING!.
-					a.setPosition(curRow, curCol);
+					
 					//Move the agent to the new tile.
 					environment.changeTile(curRow, curCol, 3);
+					localCont.at(count).setPosition(curRow, curCol);
 				}
 			}
+			count++;
 		}
 		agentContainer = localCont;
 		drawAgents();
