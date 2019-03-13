@@ -52,7 +52,7 @@ public:
 	bool isValidCell(int,int);
 	Environment bresenhamLine(Environment,unsigned int, unsigned int, unsigned int, unsigned int, unsigned short);
 	std::pair<unsigned int, unsigned int> BFSforCell(Environment, agent, unsigned short);
-
+	void setAgentContainer(std::vector<agent>);
 private:
 	Environment environment;
 	std::vector<agent> agentContainer;

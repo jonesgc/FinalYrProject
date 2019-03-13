@@ -574,7 +574,7 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 
 		queue.pop();
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i <= 4; i++)
 		{
 			int curRow = currCellPos.first + rowNum[i];
 			int curCol = currCellPos.second + colNum[i];
@@ -593,33 +593,64 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 	return std::make_pair(-1,-1);
 }
 
+void abmSimulator::setAgentContainer(vector<agent> input)
+{
+	agentContainer = input;
+}
+
 void abmSimulator::runSimulation()
 {	
-	pair<unsigned int, unsigned int>target = std::make_pair(3, 3);
-	long totalVertex = environment.getGridSize().first * environment.getGridSize().second;
+	vector<vector<unsigned int>> grid = environment.getEnvironmentGrid();
 	unsigned int row = environment.getGridSize().first;
 	unsigned int col = environment.getGridSize().second;
+
 	Environment eCopy = environment;	
 	vector<vector<unsigned int>> gridImage = eCopy.getEnvironmentGrid();
 
+	vector<agent> localCont = this->agentContainer;
+
+	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
+	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
 	//Cant run a simulation with no agents in.
-	if ((agentContainer.size() == 0)) 
+	if (this->agentContainer.size() == 0) 
 	{
 		//Need to produce an error message here.
 	}
 	else
 	{
 		//This update cycle is only for non-crowd agents. This function would need to be extended to work with crowds.
-		for each (agent a in agentContainer)
+		for each (agent a in localCont)
 		{
 			unsigned int x = a.getPosition().first;
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			pair<unsigned int, unsigned int> target = BFSforCell(eCopy, a, objCode);
 
+			//Draw the path for the agent to try and follow on a copy of the environment.
 			eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
+			gridImage = eCopy.getEnvironmentGrid();
+
+			//Scan around the agent looking for the path.
+			for (int i = 0; i <= 7; i++)
+			{
+				int curRow = x + rowNum[i];
+				int curCol = y + colNum[i];
+
+				if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9))
+				{
+					//Clear the current tile.
+					environment.changeTile(x, y, 0);
+
+					//THIS IS NOT WORKING!.
+					a.setPosition(curRow, curCol);
+					//Move the agent to the new tile.
+					environment.changeTile(curRow, curCol, 3);
+				}
+			}
 		}
+		agentContainer = localCont;
+		drawAgents();
 	}
 	
 }
