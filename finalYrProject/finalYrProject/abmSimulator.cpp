@@ -333,7 +333,6 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	newEnvironment.setRenderedGrid(grid);
 	agentContainer = agentList;
 	this->environment = newEnvironment;
-	simReady = true;
 }
 
 
@@ -614,18 +613,19 @@ void abmSimulator::setAgentContainer(vector<agent> input)
 
 void abmSimulator::runSimulation()
 {	
-	vector<vector<unsigned int>> grid = environment.getEnvironmentGrid();
 	unsigned int row = environment.getGridSize().first;
 	unsigned int col = environment.getGridSize().second;
 
 	Environment eCopy = environment;	
 	vector<vector<unsigned int>> gridImage = eCopy.getEnvironmentGrid();
-
+	static vector<vector<unsigned int>> grid = environment.getEnvironmentGrid();
 	vector<agent> localCont = this->agentContainer;
 
 	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
 	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
+	bool moved = false;
+
 	//Cant run a simulation with no agents in.
 	if (this->agentContainer.size() == 0) 
 	{
@@ -640,34 +640,39 @@ void abmSimulator::runSimulation()
 			unsigned int x = a.getPosition().first;
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
+			unsigned int searchRange = 0;
+
+			//Find the target cell. 
 			pair<unsigned int, unsigned int> target = BFSforCell(eCopy, a, objCode);
 
 			//Draw the path for the agent to try and follow on a copy of the environment.
 			eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
 			gridImage = eCopy.getEnvironmentGrid();
 
-			
 			//Scan around the agent looking for the path.
 			for (int i = 0; i <= 7; i++)
 			{
-				int curRow = x + rowNum[i];
-				int curCol = y + colNum[i];
+				int curRow = x + (searchRange + rowNum[i]);
+				int curCol = y + (searchRange + colNum[i]);
 
-				if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9))
+				if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol]==0))
 				{
 					//Clear the current tile.
 					environment.changeTile(x, y, 0);
 
-					
 					//Move the agent to the new tile.
 					environment.changeTile(curRow, curCol, 3);
 					localCont.at(count).setPosition(curRow, curCol);
+					moved = true;
 				}
 			}
+
+			eCopy = this->environment;
+			agentContainer = localCont;
+			drawAgents();
 			count++;
 		}
 	}
-	agentContainer = localCont;
-	drawAgents();
-	
+	//This will mean that the simulation will continue.
+	simReady = true;
 }
