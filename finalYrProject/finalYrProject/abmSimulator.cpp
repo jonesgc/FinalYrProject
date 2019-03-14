@@ -22,7 +22,7 @@ using json = nlohmann::json;
 
 abmSimulator::abmSimulator()
 {
-
+	simReady = false; 
 }
 
 
@@ -41,6 +41,10 @@ int abmSimulator::run()
 	//Create window (x,y)size, if using the windowed mode, with title and load the settings.
 	sf::RenderWindow window(sf::VideoMode(1900, 980), "project", sf::Style::Default, settings);
 
+	//Clock used for recalling the runSimulation function which advanced the simulation.
+	sf::Clock clock;
+
+	//Test Line
 	sf::Vertex line[] =
 	{
 		sf::Vertex(sf::Vector2f(250.f, 0.f)),
@@ -85,6 +89,15 @@ int abmSimulator::run()
 			}
 			gui.handleEvent(event);
 		}
+
+		//Advance the simulation.
+		sf::Time delta = clock.getElapsedTime();
+		if ((delta >= sf::seconds(1.0f)) && simReady)
+		{
+			runSimulation();
+			clock.restart();
+		}
+
 
 		//Recommended render loop for SFML.
 		window.clear();
@@ -320,6 +333,7 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	newEnvironment.setRenderedGrid(grid);
 	agentContainer = agentList;
 	this->environment = newEnvironment;
+	simReady = true;
 }
 
 
@@ -652,8 +666,8 @@ void abmSimulator::runSimulation()
 			}
 			count++;
 		}
-		agentContainer = localCont;
-		drawAgents();
 	}
+	agentContainer = localCont;
+	drawAgents();
 	
 }
