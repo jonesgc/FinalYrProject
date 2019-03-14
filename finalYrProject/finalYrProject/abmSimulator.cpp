@@ -216,6 +216,9 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	tx = sx;
 	ty = sy;
 
+	float calEx = (gridX * 2) * 15;
+	float calEy = (gridY * 2) * 15;
+
 	//This is used to create the lines of the grid, depending on the value of the bool the vertex will be either the start or the end
 	bool posW = true;
 	bool posH = true;
@@ -224,12 +227,12 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 		//Horizontals
 		if (posW)
 		{
-			grid.append(sf::Vertex(sf::Vector2f(sx, ty), sf::Color::Red));
+			grid.append(sf::Vertex(sf::Vector2f(sx, ty), sf::Color::White));
 			posW = false;
 		}
 		else
 		{
-			grid.append(sf::Vertex(sf::Vector2f(ex, ty), sf::Color::Red));
+			grid.append(sf::Vertex(sf::Vector2f(calEx, ty), sf::Color::White));
 			posW = true;
 			ty += cell;
 		}
@@ -241,12 +244,12 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	{
 		if (posH)
 		{
-			grid.append(sf::Vertex(sf::Vector2f(tx, sy), sf::Color::Red));
+			grid.append(sf::Vertex(sf::Vector2f(tx, sy), sf::Color::White));
 			posH = false;
 		}
 		else
 		{
-			grid.append(sf::Vertex(sf::Vector2f(tx, ey), sf::Color::Red));
+			grid.append(sf::Vertex(sf::Vector2f(tx, calEy), sf::Color::White));
 			posH = true;
 			tx += cell;
 		}
