@@ -139,6 +139,7 @@ public:
 	*/
 	interactable findInteractableAt(std::pair<unsigned int, unsigned int>);
 
+
 private:
 	Environment environment;
 	std::vector<agent> agentContainer;

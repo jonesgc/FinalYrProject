@@ -6,8 +6,5 @@ d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(550): warning C424
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(550): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(610): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(613): warning C4018: '<': signed/unsigned mismatch
-  interactable.cpp
-  main.cpp
-  Generating Code...
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(670): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe

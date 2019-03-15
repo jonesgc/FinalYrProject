@@ -36,9 +36,9 @@ unsigned short agent::getStress()
 	return 0;
 }
 
-unsigned int agent::getTarget()
+std::pair<unsigned int, unsigned int> agent::getTarget()
 {
-	return 0;
+	return target;
 }
 
 char agent::getSex()
@@ -73,8 +73,9 @@ void agent::setEnergy(unsigned short)
 {
 }
 
-void agent::setTarget(unsigned int)
+void agent::setTarget(unsigned int x, unsigned int y)
 {
+	target = std::make_pair(x, y);
 }
 
 void agent::setSex(char)

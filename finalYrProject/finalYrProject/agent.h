@@ -17,7 +17,7 @@ public:
 	unsigned short getHealth();
 	unsigned short getEnergy();
 	unsigned short getStress();
-	unsigned int getTarget();
+	std::pair<unsigned int, unsigned int> getTarget();
 	char getSex();
 	std::string getObjective();
 	std::pair<float, float> getRposition();
@@ -27,7 +27,7 @@ public:
 	void setAge(unsigned short);
 	void setHealth(unsigned short);
 	void setEnergy(unsigned short);
-	void setTarget(unsigned int);
+	void setTarget(unsigned int, unsigned int);
 	void setSex(char);
 	void setObjective(std::string);
 	void setRposition(float, float);
@@ -38,7 +38,7 @@ private:
 	unsigned short health;
 	unsigned short energy;
 	unsigned short stress;
-	unsigned int target;
+	std::pair<unsigned int, unsigned int> target;
 	std::string sex;
 	std::string objective;
 	std::pair<float, float> rPosition;

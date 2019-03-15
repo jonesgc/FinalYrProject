@@ -687,7 +687,8 @@ void abmSimulator::runSimulation()
 	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
 	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
-	bool moved = false;
+	bool move = false;
+	string curObjective = "FIND_DOOR";
 
 	//Cant run a simulation with no agents in.
 	if (this->agentContainer.size() == 0) 
@@ -704,80 +705,129 @@ void abmSimulator::runSimulation()
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			unsigned int searchRange = 0;
-			string curObjective = a.getObjective();
+			
+			pair<unsigned int, unsigned int> target;
 
-
-			//IF NOT MOVING?
-			//Check if the agent is near their target.
-			for (int i = 0; i <= 7; i++)
+			if (curObjective == "FIND_SIGN")
 			{
-				int curRow = x + (searchRange + rowNum[i]);
-				int curCol = y + (searchRange + colNum[i]);
-				
-				if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
+				//Check if the agent is near their target.
+				for (int i = 0; i <= 7; i++)
 				{
-					//Find out what the interactable near them is.
-					interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+					int curRow = x + (searchRange + rowNum[i]);
+					int curCol = y + (searchRange + colNum[i]);
 
-					string desc = inter.getDescription();
-					unsigned short ori = inter.getOrientation();
-					//If its a door go through it
-					if (ori == 0)
+					if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
 					{
-						//Door is horizontal. So ejection/entry areas are on the x axis.
+						//Find out what the interactable near them is.
+						interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
 
-						//Clear the current tile.
-						environment.changeTile(x, y, 0);
-
-						//Move the agent to the new tile.
-						environment.changeTile(curRow +1,curCol , 3);
-						localCont.at(count).setPosition(curRow + 1, curCol);
-					}
-					else if (ori == 1)
-					{
-						//Door is vertical. So ejection/entry areas are on the y axis.
-						//Clear the current tile.
-						environment.changeTile(x, y, 0);
-
-						//Move the agent to the new tile.
-						environment.changeTile(curRow, curCol +1, 3);
-						localCont.at(count).setPosition(curRow , curCol+1);
-					}
-					else
-					{
-						//No orientation for the door - throw a an error.
+						string desc = inter.getDescription();
+						if (desc == "SIGN")
+						{
+							pair<unsigned int, unsigned int> dest = inter.getDesination();
+							target.first = dest.first;
+							target.second = dest.second;
+						}
 					}
 				}
 
+				
+			}
+			else if (curObjective == "FIND_DOOR")
+			{
+				//Check if the agent is near their target.
+				for (int i = 0; i <= 7; i++)
+				{
+					int curRow = x + (searchRange + rowNum[i]);
+					int curCol = y + (searchRange + colNum[i]);
+
+					if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
+					{
+						//Find out what the interactable near them is.
+						interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+
+						string desc = inter.getDescription();
+						unsigned short ori = inter.getOrientation();
+						//If its a door go through it
+						if (ori == 0)
+						{
+							//Door is horizontal. So ejection/entry areas are on the x axis.
+
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							//Move the agent to the new tile.
+							environment.changeTile(curRow + 1, curCol, 3);
+							localCont.at(count).setPosition(curRow + 1, curCol);
+							
+						}
+						else if (ori == 1)
+						{
+							//Door is vertical. So ejection/entry areas are on the y axis.
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							//Move the agent to the new tile.
+							environment.changeTile(curRow, curCol + 1, 3);
+							localCont.at(count).setPosition(curRow, curCol + 1);
+							
+						}
+						else
+						{
+							//No orientation for the door - throw a an error.
+						}
+					}
+				}
+				//Evaluate Objective.
+				curObjective = "FIND_SIGN";
+			}
+			else if (curObjective == "FIND_EXIT")
+			{
+
 			}
 
+			//Temp
+			move = true;
+			if (move)
+			{
 			//MOVING
 			//Find the target cell. 
-			pair<unsigned int, unsigned int> target = BFSforCell(eCopy, a, objCode);
+				
+					if (target.first == 0 && target.second == 0)
+					{
+						//Look for an interactable.
+						target = BFSforCell(eCopy, a, objCode);
+					}
+					
 
-			//Draw the path for the agent to try and follow on a copy of the environment.
-			eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
-			gridImage = eCopy.getEnvironmentGrid();
+				//Draw the path for the agent to try and follow on a copy of the environment.
+				eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
+				gridImage = eCopy.getEnvironmentGrid();
 
-			//Scan around the agent looking for the path.
-			for (int i = 0; i <= 7; i++)
-			{
-				int curRow = x + (searchRange + rowNum[i]);
-				int curCol = y + (searchRange + colNum[i]);
-
-				//Move
-				if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol]==0))
+				//Scan around the agent looking for the path.
+				for (int i = 0; i <= 7; i++)
 				{
-					//Clear the current tile.
-					environment.changeTile(x, y, 0);
+					int curRow = x + (searchRange + rowNum[i]);
+					int curCol = y + (searchRange + colNum[i]);
 
-					//Move the agent to the new tile.
-					environment.changeTile(curRow, curCol, 3);
-					localCont.at(count).setPosition(curRow, curCol);
-					moved = true;
+					//Move
+					if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol] == 0))
+					{
+						//Clear the current tile.
+						environment.changeTile(x, y, 0);
+
+						//Move the agent to the new tile.
+						environment.changeTile(curRow, curCol, 3);
+						localCont.at(count).setPosition(curRow, curCol);
+						move = false;
+					}
 				}
 			}
+			else
+			{
 
+			}
+			
 			eCopy = this->environment;
 			agentContainer = localCont;
 			drawAgents();

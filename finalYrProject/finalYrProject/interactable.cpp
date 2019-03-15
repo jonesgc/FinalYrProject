@@ -42,6 +42,11 @@ unsigned short interactable::getOrientation()
 	return oritentation;
 }
 
+std::pair<unsigned int, unsigned int> interactable::getDesination()
+{
+	return signDesination;
+}
+
 void interactable::setState(bool s)
 {
 	state = s;

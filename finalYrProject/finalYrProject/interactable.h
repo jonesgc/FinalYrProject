@@ -16,6 +16,7 @@ public:
 	unsigned short getIntegrity();
 	unsigned short getHeatResistance();
 	unsigned short getOrientation();
+	std::pair<unsigned int, unsigned int> getDesination();
 
 	//Setters.
 	void setState(bool);
