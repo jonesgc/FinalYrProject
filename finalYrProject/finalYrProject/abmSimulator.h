@@ -132,6 +132,12 @@ public:
 	*/
 	std::pair<unsigned int, unsigned int> BFSforCell(Environment, agent, unsigned short);
 	
+	/*
+	\fn findInteractableAt(std::pair<unsigned int, unsigned int>)
+	\breif Iterates through the interactables container and finds the interactable at the input co-ordiniates and returns it.
+	\param co-ords a pair of unsigned integers denoting X and Y co-ordiniate to be used as the search parameter.
+	*/
+	interactable findInteractableAt(std::pair<unsigned int, unsigned int>);
 
 private:
 	Environment environment;

@@ -37,7 +37,22 @@ unsigned short interactable::getHeatResistance()
 	return heatResistance;
 }
 
+unsigned short interactable::getOrientation()
+{
+	return oritentation;
+}
+
 void interactable::setState(bool s)
 {
 	state = s;
+}
+
+void interactable::setOrientation(unsigned short o)
+{
+	oritentation = o;
+}
+
+void interactable::makeSignDirection(unsigned int x, unsigned int y)
+{
+	signDesination = std::make_pair(x, y);
 }

@@ -16,6 +16,7 @@ using std::vector;
 using std::tuple;
 using std::pair;
 using std::queue;
+using std::string;
 
 //For convience with 3rd party JSON libary
 using json = nlohmann::json;
@@ -216,8 +217,8 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	tx = sx;
 	ty = sy;
 
-	float calEx = (gridX * 2) * 15;
-	float calEy = (gridY * 2) * 15;
+	float calEx = (gridX * 15) + sx;
+	float calEy = (gridY * 15) + sy;
 
 	//This is used to create the lines of the grid, depending on the value of the bool the vertex will be either the start or the end
 	bool posW = true;
@@ -275,16 +276,33 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 		float rX, rY = 0;
 		pair<unsigned int, unsigned int> gridDest = inter.getPosition();
 
-		rX = sx + (gridDest.first * cell);
-		rY = sy + (gridDest.second * cell);
+		if (inter.getDescription() == "SIGN")
+		{
+			rX = sx + (gridDest.first * cell);
+			rY = sy + (gridDest.second * cell);
 
-		grid.append(sf::Vertex(sf::Vector2f(rX, rY), sf::Color::Magenta));
-		grid.append(sf::Vertex(sf::Vector2f(rX, rY+15), sf::Color::Magenta));
-		grid.append(sf::Vertex(sf::Vector2f(rX+15, rY+15), sf::Color::Magenta));
-		grid.append(sf::Vertex(sf::Vector2f(rX+15, rY), sf::Color::Magenta));
+			grid.append(sf::Vertex(sf::Vector2f(rX, rY), sf::Color::Yellow));
+			grid.append(sf::Vertex(sf::Vector2f(rX + 15.f, rY), sf::Color::Yellow));
+			grid.append(sf::Vertex(sf::Vector2f(rX + 15.f, rY + 15.f), sf::Color::Yellow));
+			grid.append(sf::Vertex(sf::Vector2f(rX, rY + 15.f), sf::Color::Yellow));
 
-		pair<unsigned int, unsigned int> curPos = inter.getPosition();
-		newEnvironment.changeTile(curPos.first, curPos.second, 2);
+			pair<unsigned int, unsigned int> curPos = inter.getPosition();
+			newEnvironment.changeTile(curPos.first, curPos.second, 2);
+		}
+		else
+		{
+			rX = sx + (gridDest.first * cell);
+			rY = sy + (gridDest.second * cell);
+
+			grid.append(sf::Vertex(sf::Vector2f(rX, rY), sf::Color::Magenta));
+			grid.append(sf::Vertex(sf::Vector2f(rX, rY + 15), sf::Color::Magenta));
+			grid.append(sf::Vertex(sf::Vector2f(rX + 15, rY + 15), sf::Color::Magenta));
+			grid.append(sf::Vertex(sf::Vector2f(rX + 15, rY), sf::Color::Magenta));
+
+			pair<unsigned int, unsigned int> curPos = inter.getPosition();
+			newEnvironment.changeTile(curPos.first, curPos.second, 2);
+		}
+		
 		
 	}
 
@@ -335,6 +353,7 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 	//Envrionment is created and ready for simulation.
 	newEnvironment.setRenderedGrid(grid);
 	agentContainer = agentList;
+	interactableContainer = interactList;
 	this->environment = newEnvironment;
 }
 
@@ -416,14 +435,40 @@ void abmSimulator::loadSimulation()
 			for (auto it = jInteractable.begin(); it != jInteractable.end(); it++)
 			{
 				item = it.value();
-				unsigned int xPos = item.at(0);
-				unsigned int yPos = item.at(1);
-				std::string descr = item.at(2);
-				bool state = item.at(3);
-				unsigned short intgre = item.at(4);
-				unsigned short heatr = item.at(5);
-				interactableList.push_back(interactable(count,xPos, yPos, descr,state,intgre,heatr));
-				count++;
+
+				//Signs need to "point to a specific desiniation so they can be used for way finding.
+				//The different types of interactable should have been classes i.e. a door class.
+				if (item.at(2) == "SIGN")
+				{
+					unsigned int xPos = item.at(0);
+					unsigned int yPos = item.at(1);
+					std::string descr = item.at(2);
+					bool state = item.at(3);
+					unsigned short intgre = item.at(4);
+					unsigned short heatr = item.at(5);
+
+					interactable sign(count, xPos, yPos, descr, state, intgre, heatr);
+					sign.makeSignDirection(item.at(6), item.at(7));
+					interactableList.push_back(sign);
+					count++;
+				}
+				else
+				{
+					//Doors
+					unsigned int xPos = item.at(0);
+					unsigned int yPos = item.at(1);
+					std::string descr = item.at(2);
+					bool state = item.at(3);
+					unsigned short intgre = item.at(4);
+					unsigned short heatr = item.at(5);
+					unsigned short ori = item.at(6);
+					interactable door = interactable(count, xPos, yPos, descr, state, intgre, heatr);
+					door.setOrientation(ori);
+
+					interactableList.push_back(door);
+					count++;
+				}
+				
 			}
 		}
 		
@@ -609,6 +654,21 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 	return std::make_pair(-1,-1);
 }
 
+interactable abmSimulator::findInteractableAt(std::pair<unsigned int, unsigned int> tPos)
+{
+	unsigned int tx = tPos.first;
+	unsigned int ty = tPos.second;
+	for each (interactable i in interactableContainer)
+	{
+		pair<unsigned int, unsigned int> iPos = i.getPosition();
+
+		if ((iPos.first == tx) && (iPos.second == ty))
+		{
+			return i;
+		}
+	}
+}
+
 void abmSimulator::setAgentContainer(vector<agent> input)
 {
 	agentContainer = input;
@@ -644,7 +704,54 @@ void abmSimulator::runSimulation()
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			unsigned int searchRange = 0;
+			string curObjective = a.getObjective();
 
+
+			//IF NOT MOVING?
+			//Check if the agent is near their target.
+			for (int i = 0; i <= 7; i++)
+			{
+				int curRow = x + (searchRange + rowNum[i]);
+				int curCol = y + (searchRange + colNum[i]);
+				
+				if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
+				{
+					//Find out what the interactable near them is.
+					interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+
+					string desc = inter.getDescription();
+					unsigned short ori = inter.getOrientation();
+					//If its a door go through it
+					if (ori == 0)
+					{
+						//Door is horizontal. So ejection/entry areas are on the x axis.
+
+						//Clear the current tile.
+						environment.changeTile(x, y, 0);
+
+						//Move the agent to the new tile.
+						environment.changeTile(curRow +1,curCol , 3);
+						localCont.at(count).setPosition(curRow + 1, curCol);
+					}
+					else if (ori == 1)
+					{
+						//Door is vertical. So ejection/entry areas are on the y axis.
+						//Clear the current tile.
+						environment.changeTile(x, y, 0);
+
+						//Move the agent to the new tile.
+						environment.changeTile(curRow, curCol +1, 3);
+						localCont.at(count).setPosition(curRow , curCol+1);
+					}
+					else
+					{
+						//No orientation for the door - throw a an error.
+					}
+				}
+
+			}
+
+			//MOVING
 			//Find the target cell. 
 			pair<unsigned int, unsigned int> target = BFSforCell(eCopy, a, objCode);
 
@@ -658,6 +765,7 @@ void abmSimulator::runSimulation()
 				int curRow = x + (searchRange + rowNum[i]);
 				int curCol = y + (searchRange + colNum[i]);
 
+				//Move
 				if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol]==0))
 				{
 					//Clear the current tile.
