@@ -658,7 +658,7 @@ interactable abmSimulator::findInteractableAt(std::pair<unsigned int, unsigned i
 {
 	unsigned int tx = tPos.first;
 	unsigned int ty = tPos.second;
-	for each (interactable i in interactableContainer)
+	for each (interactable i in this->interactableContainer)
 	{
 		pair<unsigned int, unsigned int> iPos = i.getPosition();
 
@@ -688,7 +688,6 @@ void abmSimulator::runSimulation()
 	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
 	bool move = false;
-	string curObjective = "FIND_DOOR";
 
 	//Cant run a simulation with no agents in.
 	if (this->agentContainer.size() == 0) 
@@ -701,14 +700,16 @@ void abmSimulator::runSimulation()
 		//This update cycle is only for non-crowd agents. This function would need to be extended to work with crowds.
 		for each (agent a in localCont)
 		{
+			string obj = a.getObjective();
 			unsigned int x = a.getPosition().first;
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			unsigned int searchRange = 0;
 			
+			
 			pair<unsigned int, unsigned int> target;
 
-			if (curObjective == "FIND_SIGN")
+			if (obj == "FIND_SIGN")
 			{
 				//Check if the agent is near their target.
 				for (int i = 0; i <= 7; i++)
@@ -725,15 +726,14 @@ void abmSimulator::runSimulation()
 						if (desc == "SIGN")
 						{
 							pair<unsigned int, unsigned int> dest = inter.getDesination();
-							target.first = dest.first;
-							target.second = dest.second;
+							localCont.at(count).setTarget(dest.first, dest.second);
 						}
 					}
 				}
 
 				
 			}
-			else if (curObjective == "FIND_DOOR")
+			else if (obj == "FIND_DOOR")
 			{
 				//Check if the agent is near their target.
 				for (int i = 0; i <= 7; i++)
@@ -759,6 +759,7 @@ void abmSimulator::runSimulation()
 							//Move the agent to the new tile.
 							environment.changeTile(curRow + 1, curCol, 3);
 							localCont.at(count).setPosition(curRow + 1, curCol);
+							localCont.at(count).setObjective("FIND_SIGN");
 							
 						}
 						else if (ori == 1)
@@ -774,30 +775,30 @@ void abmSimulator::runSimulation()
 						}
 						else
 						{
-							//No orientation for the door - throw a an error.
+							
 						}
 					}
 				}
+				//Move to try find the door.
+				move = true;
 				//Evaluate Objective.
-				curObjective = "FIND_SIGN";
+				//curObjective = "FIND_SIGN";
 			}
-			else if (curObjective == "FIND_EXIT")
+			else if (obj == "FIND_EXIT")
 			{
 
 			}
-
-			//Temp
-			move = true;
+			
 			if (move)
 			{
 			//MOVING
 			//Find the target cell. 
 				
-					if (target.first == 0 && target.second == 0)
-					{
-						//Look for an interactable.
-						target = BFSforCell(eCopy, a, objCode);
-					}
+				if (target.first == 0 && target.second == 0)
+				{
+					//Look for an interactable.
+					target = BFSforCell(eCopy, a, objCode);
+				}
 					
 
 				//Draw the path for the agent to try and follow on a copy of the environment.
@@ -822,10 +823,6 @@ void abmSimulator::runSimulation()
 						move = false;
 					}
 				}
-			}
-			else
-			{
-
 			}
 			
 			eCopy = this->environment;

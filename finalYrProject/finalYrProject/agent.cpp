@@ -4,6 +4,8 @@
 
 agent::agent(unsigned int i, unsigned int x, unsigned int y, bool c, std::string s, unsigned int a)
 {
+	//Tempoary measure to test sign finding.
+	objective = "FIND_DOOR";
 	setEntityId(i);
 	setPosition(x, y);
 	coperative = c;
@@ -48,7 +50,7 @@ char agent::getSex()
 
 std::string agent::getObjective()
 {
-	return std::string();
+	return objective;
 }
 
 std::pair<float, float> agent::getRposition()
@@ -82,8 +84,9 @@ void agent::setSex(char)
 {
 }
 
-void agent::setObjective(std::string)
+void agent::setObjective(std::string o)
 {
+	objective = o;
 }
 
 void agent::setRposition(float x, float y)
