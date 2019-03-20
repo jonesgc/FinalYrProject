@@ -139,6 +139,13 @@ public:
 	*/
 	interactable findInteractableAt(std::pair<unsigned int, unsigned int>);
 
+	/*
+	\fn isSign(std::pair<unsigned int, unsigned int>)
+	\brief Checks if the input co-ordinates are a sign or not, this is so agents can move through signs.
+	\param the environment on which to check the target cell.
+	\param co-ordinates containting the x,y positions on the grid of the cell to be checked.
+	*/
+	bool isSign(Environment, unsigned int, unsigned int);
 
 private:
 	Environment environment;

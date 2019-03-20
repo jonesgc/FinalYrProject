@@ -669,6 +669,23 @@ interactable abmSimulator::findInteractableAt(std::pair<unsigned int, unsigned i
 	}
 }
 
+bool abmSimulator::isSign(Environment e, unsigned int x, unsigned int y)
+{
+	vector<vector<unsigned int>> g = e.getEnvironmentGrid();
+	if (g[x][y] == 2)
+	{
+		for each (interactable i in this->interactableContainer)
+		{
+			pair<unsigned int, unsigned int> iPos = i.getPosition();
+			if ((iPos.first == x) && (iPos.second == y) && (i.getDescription() == "SIGN"))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void abmSimulator::setAgentContainer(vector<agent> input)
 {
 	agentContainer = input;
@@ -726,12 +743,12 @@ void abmSimulator::runSimulation()
 						if (desc == "SIGN")
 						{
 							pair<unsigned int, unsigned int> dest = inter.getDesination();
-							localCont.at(count).setTarget(dest.first, dest.second);
+							a.setTarget(dest.first, dest.second);
+							a.setObjective("FIND_EXIT");
+							break;
 						}
 					}
-				}
-
-				
+				}	
 			}
 			else if (obj == "FIND_DOOR")
 			{
@@ -794,16 +811,22 @@ void abmSimulator::runSimulation()
 			//MOVING
 			//Find the target cell. 
 				
-				if (target.first == 0 && target.second == 0)
+				if (a.getTarget().first == 0 && a.getTarget().second == 0)
 				{
 					//Look for an interactable.
 					target = BFSforCell(eCopy, a, objCode);
+					//Draw the path for the agent to try and follow on a copy of the environment.
+					eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
+					gridImage = eCopy.getEnvironmentGrid();
+				}
+				else
+				{
+					eCopy = bresenhamLine(eCopy, x, y, a.getTarget().first, a.getTarget().second, 9);
+					gridImage = eCopy.getEnvironmentGrid();
 				}
 					
 
-				//Draw the path for the agent to try and follow on a copy of the environment.
-				eCopy = bresenhamLine(eCopy, x, y, target.first, target.second, 9);
-				gridImage = eCopy.getEnvironmentGrid();
+				
 
 				//Scan around the agent looking for the path.
 				for (int i = 0; i <= 7; i++)
@@ -818,6 +841,16 @@ void abmSimulator::runSimulation()
 						environment.changeTile(x, y, 0);
 
 						//Move the agent to the new tile.
+						environment.changeTile(curRow, curCol, 3);
+						localCont.at(count).setPosition(curRow, curCol);
+						move = false;
+					}
+					//Move through a sign.
+					else if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && isSign(environment, curRow, curCol))
+					{
+						//Clear the current tile.
+						environment.changeTile(x, y, 0);
+
 						environment.changeTile(curRow, curCol, 3);
 						localCont.at(count).setPosition(curRow, curCol);
 						move = false;
