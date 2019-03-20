@@ -699,13 +699,13 @@ void abmSimulator::runSimulation()
 	Environment eCopy = environment;	
 	vector<vector<unsigned int>> gridImage = eCopy.getEnvironmentGrid();
 	static vector<vector<unsigned int>> grid = environment.getEnvironmentGrid();
-	vector<agent> localCont = this->agentContainer;
+	
 
 	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
 	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
 	bool move = false;
-
+	int remove = 0;
 	//Cant run a simulation with no agents in.
 	if (this->agentContainer.size() == 0) 
 	{
@@ -714,6 +714,7 @@ void abmSimulator::runSimulation()
 	else
 	{
 		int count = 0;
+		vector<agent> localCont = this->agentContainer;
 		//This update cycle is only for non-crowd agents. This function would need to be extended to work with crowds.
 		for each (agent a in localCont)
 		{
@@ -722,9 +723,7 @@ void abmSimulator::runSimulation()
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			unsigned int searchRange = 0;
-			
-			
-			pair<unsigned int, unsigned int> target;
+			pair<unsigned int, unsigned int> target = agentContainer.at(count).getTarget();
 
 			if (obj == "FIND_SIGN")
 			{
@@ -743,8 +742,9 @@ void abmSimulator::runSimulation()
 						if (desc == "SIGN")
 						{
 							pair<unsigned int, unsigned int> dest = inter.getDesination();
-							a.setTarget(dest.first, dest.second);
-							a.setObjective("FIND_EXIT");
+							localCont.at(count).setTarget(dest.first, dest.second);
+							localCont.at(count).setObjective("FIND_EXIT");
+							move = true;
 							break;
 						}
 					}
@@ -803,7 +803,33 @@ void abmSimulator::runSimulation()
 			}
 			else if (obj == "FIND_EXIT")
 			{
+				//Reached target from sign.
+				//Check if the agent is near their target.
+				for (int i = 0; i <= 7; i++)
+				{
+					int curRow = x + (searchRange + rowNum[i]);
+					int curCol = y + (searchRange + colNum[i]);
 
+					if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
+					{
+						//Find out what the interactable near them is.
+						interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+
+						string desc = inter.getDescription();
+						if (desc == "ESCAPE")
+						{
+							this->escapedAgentsContainer.push_back(localCont.at(count));
+							move = false;
+							remove += 1;
+							break;
+						}
+					}
+					else
+					{
+						move = true;
+					}
+
+				}
 			}
 			
 			if (move)
@@ -859,10 +885,19 @@ void abmSimulator::runSimulation()
 			}
 			
 			eCopy = this->environment;
-			agentContainer = localCont;
+			this->agentContainer = localCont;
 			drawAgents();
 			count++;
 		}
+
+		if (!this->escapedAgentsContainer.empty())
+		{
+			for (auto i = 0; i < remove; i++)
+			{
+				this->agentContainer.erase(this->agentContainer.begin() + i);
+			}
+		}
+		
 	}
 	//This will mean that the simulation will continue.
 	simReady = true;
