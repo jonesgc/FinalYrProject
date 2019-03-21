@@ -718,7 +718,7 @@ void abmSimulator::runSimulation()
 	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
 	
 	bool move = false;
-	int remove = 0;
+	vector<unsigned int> remove;
 	//Cant run a simulation with no agents in.
 	if (this->agentContainer.size() == 0) 
 	{
@@ -782,14 +782,35 @@ void abmSimulator::runSimulation()
 						if (ori == 0)
 						{
 							//Door is horizontal. So ejection/entry areas are on the x axis.
+							//Check which side the agent is on.
+							if (x > curRow)
+							{
+								//check if exit is clear
+								if ((grid[curRow - 1][curCol] == 2) || (grid[curRow - 1][curCol] == 0))
+								{
+									//Clear the current tile.
+									environment.changeTile(x, y, 0);
 
-							//Clear the current tile.
-							environment.changeTile(x, y, 0);
+									//Move the agent to the new tile.
+									environment.changeTile(curRow - 1, curCol, 3);
+									localCont.at(count).setPosition(curRow - 1, curCol);
+									localCont.at(count).setObjective("FIND_SIGN");
+								}
 
-							//Move the agent to the new tile.
-							environment.changeTile(curRow + 1, curCol, 3);
-							localCont.at(count).setPosition(curRow + 1, curCol);
-							localCont.at(count).setObjective("FIND_SIGN");
+							}
+							else if (x < curRow)
+							{
+								if ((grid[curRow + 1][curCol] == 2) || (grid[curRow + 1][curCol] == 0))
+								{
+									//Clear the current tile.
+									environment.changeTile(x, y, 0);
+
+									//Move the agent to the new tile.
+									environment.changeTile(curRow + 1, curCol, 3);
+									localCont.at(count).setPosition(curRow + 1, curCol);
+									localCont.at(count).setObjective("FIND_SIGN");
+								}
+							}
 							
 						}
 						else if (ori == 1)
@@ -801,10 +822,6 @@ void abmSimulator::runSimulation()
 							//Move the agent to the new tile.
 							environment.changeTile(curRow, curCol + 1, 3);
 							localCont.at(count).setPosition(curRow, curCol + 1);
-							
-						}
-						else
-						{
 							
 						}
 					}
@@ -833,7 +850,7 @@ void abmSimulator::runSimulation()
 						{
 							this->escapedAgentsContainer.push_back(localCont.at(count));
 							move = false;
-							remove += 1;
+							remove.push_back(a.getEnityID());
 							break;
 						}
 					}
@@ -863,10 +880,7 @@ void abmSimulator::runSimulation()
 					eCopy = bresenhamLine(eCopy, x, y, a.getTarget().first, a.getTarget().second, 9);
 					gridImage = eCopy.getEnvironmentGrid();
 				}
-					
-
 				
-
 				//Scan around the agent looking for the path.
 				for (int i = 0; i <= 7; i++)
 				{
@@ -904,10 +918,17 @@ void abmSimulator::runSimulation()
 		}
 
 		if (!this->escapedAgentsContainer.empty())
-		{
-			for (auto i = 0; i < remove; i++)
+		{	
+			for each(unsigned int i in remove)
 			{
-				this->agentContainer.erase(this->agentContainer.begin() + i);
+				for (auto it = this->agentContainer.begin(); it != this->agentContainer.end(); ++it)
+				{
+					if (it->getEnityID() == i)
+					{
+						this->agentContainer.erase(it);
+						break;
+					}
+				}
 			}
 		}
 		
