@@ -1,10 +1,6 @@
 ﻿  abmSimulator.cpp
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(528): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(549): warning C4244: 'initializing': conversion from 'unsigned int' to 'float', possible loss of data
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(549): warning C4244: 'initializing': conversion from 'unsigned int' to 'const float', possible loss of data
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(550): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(550): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(610): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(613): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(670): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(623): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(626): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(683): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe

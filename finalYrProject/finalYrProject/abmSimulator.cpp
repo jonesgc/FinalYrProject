@@ -528,52 +528,65 @@ bool abmSimulator::isValidCell(int r, int c)
 	return (r >= 0) && (r < environment.getGridSize().first) && (c >= 0) && (c < environment.getGridSize().second);
 }
 
-//bresenham algorithm code adapted from: http://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C.2B.2B C++ section.
+//bresenham algorithm code adapted from: http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm C++ section.
 //This was to avoid the reinventing the square wheel.
 Environment abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, unsigned short objCode)
 {
-	// Bresenham's line algorithm
-	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
-	if (steep)
+	int delta_x(x2 - x1);
+	// if x1 == x2, then it does not matter what we set here
+	signed char const ix((delta_x > 0) - (delta_x < 0));
+	delta_x = std::abs(delta_x) << 1;
+
+	int delta_y(y2 - y1);
+	// if y1 == y2, then it does not matter what we set here
+	signed char const iy((delta_y > 0) - (delta_y < 0));
+	delta_y = std::abs(delta_y) << 1;
+
+	env.changeTile(x1, y1, objCode);
+
+	if (delta_x >= delta_y)
 	{
-		std::swap(x1, y1);
-		std::swap(x2, y2);
-	}
+		// error may go below zero
+		int error(delta_y - (delta_x >> 1));
 
-	if (x1 > x2)
-	{
-		std::swap(x1, x2);
-		std::swap(y1, y2);
-	}
-
-	const float dx = x2 - x1;
-	const float dy = fabs(y2 - y1);
-
-	float error = dx / 2.0f;
-	const int ystep = (y1 < y2) ? 1 : -1;
-	int y = (int)y1;
-
-	const int maxX = (int)x2;
-
-	for (int x = (int)x1; x < maxX; x++)
-	{
-		if (steep)
+		while (x1 != x2)
 		{
-			env.changeTile(y, x, objCode);
-		}
-		else
-		{
-			env.changeTile(x, y, objCode);
-		}
+			// reduce error, while taking into account the corner case of error == 0
+			if ((error > 0) || (!error && (ix > 0)))
+			{
+				error -= delta_x;
+				y1 += iy;
+			}
+			// else do nothing
 
-		error -= dy;
-		if (error < 0)
-		{
-			y += ystep;
-			error += dx;
+			error += delta_y;
+			x1 += ix;
+
+			env.changeTile(x1, y1, objCode);
 		}
 	}
+	else
+	{
+		// error may go below zero
+		int error(delta_x - (delta_y >> 1));
 
+		while (y1 != y2)
+		{
+			// reduce error, while taking into account the corner case of error == 0
+			if ((error > 0) || (!error && (iy > 0)))
+			{
+				error -= delta_y;
+				x1 += ix;
+			}
+			// else do nothing
+
+			error += delta_x;
+			y1 += iy;
+
+			env.changeTile(x1, y1, objCode);
+		}
+	}
+	
 	return env;
 }
 
