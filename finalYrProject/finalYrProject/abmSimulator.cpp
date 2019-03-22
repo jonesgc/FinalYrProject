@@ -58,6 +58,15 @@ int abmSimulator::run()
 	simState.setFillColor(sf::Color::White);
 	simState.setPosition(sf::Vector2f(730.f, 15.f));
 
+	//Time is currently recorded in secconds.
+	int time = 0;
+	sf::Text timer;
+	timer.setFont(font);
+	timer.setCharacterSize(20);
+	timer.setFillColor(sf::Color::White);
+	timer.setPosition(sf::Vector2f(1200.f, 15.f));
+	timer.setString("0");
+
 	//Test Line
 	sf::Vertex line[] =
 	{
@@ -106,13 +115,17 @@ int abmSimulator::run()
 
 		//Advance the simulation.
 		sf::Time delta = clock.getElapsedTime();
+		
 		if ((delta >= sf::seconds(1.0f)) && simReady)
 		{
+			time = time + delta.asSeconds();
+			timer.setString(std::to_string(time));
 			simState.setString("Simulation running");
 			runSimulation();
 			clock.restart();
 		}
 		
+		//Simulation state message.
 		if (!simReady && !agentContainer.empty() && loaded)
 		{
 			//Simulation Ready but not running.
@@ -125,6 +138,21 @@ int abmSimulator::run()
 			simState.setString("Simulation complete.");
 		}
 
+		//Add the agents to the widget.
+		if (loaded)
+		{
+			static bool executed = false;
+			
+			if (!executed)
+			{
+				executed = true;
+				for each(agent a in agentContainer)
+				{
+					addAgentToList(gui, a);
+				}
+			}
+			
+		}
 
 		//Recommended render loop for SFML.
 		window.clear();
@@ -134,6 +162,7 @@ int abmSimulator::run()
 		window.draw(environment.getRenderedGrid());
 		window.draw(environment.getRenderedInter());
 		window.draw(simState);
+		window.draw(timer);
 
 		//Draw the agents.
 		vector<sf::CircleShape> tempAgents = drawAgents();
@@ -174,6 +203,11 @@ void abmSimulator::mainScreenGUI(tgui::Gui & gui)
 	runSim->setText("Simulate");
 	gui.add(runSim);
 
+	tgui::ListBox::Ptr agentContainerList = tgui::ListBox::create();
+	agentContainerList->setPosition({ "0.5%", "30%" });
+	agentContainerList->setSize({ "235", "500" });
+	gui.add(agentContainerList, "agentContainerList");
+
 	//Button actions.
 	runSim->connect("pressed", &abmSimulator::runSimulation, this);
 	loadSim->connect("pressed", &abmSimulator::loadSimulation, this);
@@ -212,6 +246,8 @@ void abmSimulator::createSimulationScreen(tgui::Gui & gui)
 	tgui::EditBox::Ptr inputY = tgui::EditBox::copy(inputX);
 	inputY->setPosition({ "3%", "52%" });
 	gui.add(inputY);
+
+
 }
 
 void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY, 
@@ -728,6 +764,15 @@ bool abmSimulator::isSign(Environment e, unsigned int x, unsigned int y)
 		}
 	}
 	return false;
+}
+
+void abmSimulator::addAgentToList(tgui::Gui & gui, agent a)
+{
+	
+	tgui::ListBox::Ptr list = gui.get<tgui::ListBox>("agentContainerList");
+	string id = std::to_string(a.getEnityID());
+
+	list->addItem(id);
 }
 
 void abmSimulator::setAgentContainer(vector<agent> input)

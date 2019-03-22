@@ -61,14 +61,14 @@ public:
 	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this function.
 
 	*/
-	void mainScreenGUI(tgui::Gui& gui);
+	void mainScreenGUI(tgui::Gui&);
 
 	/*
 	\fn void createSimulationScreen(tgui::Gui&)
 	\brief Creates the screen for building a new simulation when the new simulation button is pressed.
 	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this function.
 	*/
-	void createSimulationScreen(tgui::Gui& gui);
+	void createSimulationScreen(tgui::Gui&);
 
 	void createSimulationSaveFile();
 	void createStatisticsFile();
@@ -149,6 +149,14 @@ public:
 	\param co-ordinates containting the x,y positions on the grid of the cell to be checked.
 	*/
 	bool isSign(Environment, unsigned int, unsigned int);
+
+	/*
+	\fn addAgentToList(tgui::Gui&, agent)
+	\brief Adds an agent ID to the list of agents in the agent container.
+	\param gui pointer of witch the listbox is within.
+	\param the agent to be added.
+	*/
+	void addAgentToList(tgui::Gui&, agent);
 
 private:
 	Environment environment;
