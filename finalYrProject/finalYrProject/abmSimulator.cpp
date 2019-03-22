@@ -908,6 +908,29 @@ void abmSimulator::runSimulation()
 						localCont.at(count).setPosition(curRow, curCol);
 						move = false;
 					}
+					else if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol] == 1))
+					{
+						if (x > curRow)
+						{
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							environment.changeTile(curRow +1, curCol, 3);
+							localCont.at(count).setPosition(curRow+1, curCol);
+							move = false;
+						}
+						else if (x < curRow)
+						{
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							environment.changeTile(curRow - 1, curCol, 3);
+							localCont.at(count).setPosition(curRow - 1, curCol);
+							move = false;
+						}
+						
+						
+					}
 				}
 			}
 			
