@@ -25,6 +25,9 @@ Version: 0.1
 #include <algorithm>
 #include <math.h>
 
+
+
+
 #include "agent.h"
 #include "interactable.h"
 #include "crowd.h"
@@ -155,7 +158,7 @@ private:
 	std::vector<agent> escapedAgentsContainer;
 	std::vector<agent> casualtiesContainer;
 	sf::VertexArray editorOutline;
-	bool init;
+	bool loaded;
 	bool simReady;
 };
 

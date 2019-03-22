@@ -45,6 +45,19 @@ int abmSimulator::run()
 	//Clock used for recalling the runSimulation function which advanced the simulation.
 	sf::Clock clock;
 
+	//Text used for labels and messages on the mainscreen, for elements not in GUI widgets.
+	sf::Font font;
+	if (!font.loadFromFile("OpenSans-Regular.ttf"))
+	{
+		//Error here, cant load the font file.
+	}
+	sf::Text simState;
+	simState.setFont(font);
+	simState.setString("Simulation not loaded");
+	simState.setCharacterSize(30);
+	simState.setFillColor(sf::Color::White);
+	simState.setPosition(sf::Vector2f(730.f, 15.f));
+
 	//Test Line
 	sf::Vertex line[] =
 	{
@@ -95,8 +108,21 @@ int abmSimulator::run()
 		sf::Time delta = clock.getElapsedTime();
 		if ((delta >= sf::seconds(1.0f)) && simReady)
 		{
+			simState.setString("Simulation running");
 			runSimulation();
 			clock.restart();
+		}
+		
+		if (!simReady && !agentContainer.empty() && loaded)
+		{
+			//Simulation Ready but not running.
+			simState.setString("Simulation ready");
+			
+		}
+		else if (!simReady && agentContainer.empty() && loaded)
+		{
+			//Simulation has ended.
+			simState.setString("Simulation complete.");
 		}
 
 
@@ -107,6 +133,7 @@ int abmSimulator::run()
 		window.draw(this->editorOutline);
 		window.draw(environment.getRenderedGrid());
 		window.draw(environment.getRenderedInter());
+		window.draw(simState);
 
 		//Draw the agents.
 		vector<sf::CircleShape> tempAgents = drawAgents();
@@ -472,6 +499,7 @@ void abmSimulator::loadSimulation()
 			}
 		}
 		
+		loaded = true;
 		file.close();
 	}
 
@@ -500,6 +528,8 @@ vector<sf::CircleShape> abmSimulator::drawAgents()
 	//This is the size of the cell.
 	float cell = 15.f;
 
+
+
 	//Iterate through the agent container and create a circle shape in the right position.
 	//There will be a similar function inside the crowd class that performs this as well.
 	for each (agent a in agentContainer)
@@ -513,6 +543,7 @@ vector<sf::CircleShape> abmSimulator::drawAgents()
 		a.setRposition(rX, rY);
 		sf::CircleShape sprite;
 		sprite.setRadius(5);
+
 		sprite.setFillColor(sf::Color::Blue);
 		sprite.setPosition(rX, rY);
 
@@ -942,6 +973,7 @@ void abmSimulator::runSimulation()
 
 		if (!this->escapedAgentsContainer.empty())
 		{	
+			//Remove escaped agents from agentContainer and move them to escapedAgents, this removes them from the rendered view.
 			for each(unsigned int i in remove)
 			{
 				for (auto it = this->agentContainer.begin(); it != this->agentContainer.end(); ++it)
@@ -954,8 +986,18 @@ void abmSimulator::runSimulation()
 				}
 			}
 		}
+
+		//Check if there are any agents left on the grid.
+		if (agentContainer.empty())
+		{
+			//End the simulation. 
+			simReady = false;
+		}
+		else
+		{
+			//Run simulation.
+			simReady = true;
+		}
 		
 	}
-	//This will mean that the simulation will continue.
-	simReady = true;
 }
