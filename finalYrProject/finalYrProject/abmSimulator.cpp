@@ -704,7 +704,7 @@ pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent
 
 		//Look for the requested cell type.
 		short gVal = gridImage[currCellPos.first][currCellPos.second];
-		if (gVal == 2)
+		if (gVal == objCode)
 		{
 			//Found it.
 			target = std::make_pair(currCellPos.first, currCellPos.second);
@@ -793,9 +793,9 @@ agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 	}
 
 	pair<unsigned int, unsigned int> target;
+	//This needs to alter the BFS some how, could do so by moving the start position randomly.
 	for(int i = 0; i < 5; i++)
 	{
-		
 		interactable intertar;
 		if ( obj == "FIND_SIGN" && intertar.getDescription() == "SIGN")
 		{
@@ -811,6 +811,7 @@ agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 			a.setTarget(intertar.getDesination().first, intertar.getDesination().second);
 			return a;
 		}
+		
 	}
 
 	//Evaluate what is around the agent.
@@ -838,12 +839,20 @@ agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 			{
 				a.setObjective("FIND_EXIT");
 			}
-			else if (descr == "SIGN")
+			
+		}
+		/*else if(isValidCell(curRow, curCol) && g[curRow][curCol] == 4)
+		{
+			//Find out what the interactable near them is.
+			interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+			string descr = inter.getDescription();
+			if (descr == "SIGN")
 			{
 				a.setObjective("FIND_EXIT");
 				a.setTarget(inter.getDesination().first, inter.getDesination().second);
+				return a;
 			}
-		}
+		}*/
 	}
 
 	return a;
@@ -893,7 +902,16 @@ void abmSimulator::runSimulation()
 
 			if (obj == "FIND_SIGN")
 			{
-				
+				pair<unsigned int, unsigned int> signPos = BFSforCell(environment, a, 4);
+				interactable inter = findInteractableAt(signPos);
+				localCont.at(count).setTarget(inter.getDesination().first, inter.getDesination().second);
+				target = std::make_pair(inter.getDesination().first, inter.getDesination().second);
+				if (target.first != 0 && target.second != 0)
+				{
+					localCont.at(count).setObjective("FIND_EXIT");
+					move = true;
+				}
+
 				//Check if the agent is near their target.
 				for (int i = 0; i <= 7; i++)
 				{

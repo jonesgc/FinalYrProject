@@ -3,11 +3,11 @@ d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(121): warning C424
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(593): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(688): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(691): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(940): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(960): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(982): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1001): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1109): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1119): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(958): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(978): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1000): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1019): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1127): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1137): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(748): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe
