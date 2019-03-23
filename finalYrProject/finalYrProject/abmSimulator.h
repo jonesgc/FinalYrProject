@@ -164,7 +164,7 @@ public:
 	\param the environment to be be used to check the agents surroundings.
 	\param the agent of which the function is relevant to.
 	*/
-	void evaluatePositionAndObjectives(Environment, agent);
+	agent evaluatePositionAndObjectives(Environment, agent);
 
 private:
 	Environment environment;

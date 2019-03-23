@@ -8,6 +8,7 @@ class interactable : public entity
 {
 public:
 	interactable(unsigned int, unsigned int, unsigned int, std::string, bool, unsigned short, unsigned short);
+	interactable();
 	~interactable();
 
 	//Getters.

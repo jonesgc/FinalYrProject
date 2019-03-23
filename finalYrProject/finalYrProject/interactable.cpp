@@ -13,6 +13,11 @@ interactable::interactable(unsigned int id,unsigned int x, unsigned int y, std::
 	heatResistance = hr;
 }
 
+interactable::interactable()
+{
+
+}
+
 interactable::~interactable()
 {
 }

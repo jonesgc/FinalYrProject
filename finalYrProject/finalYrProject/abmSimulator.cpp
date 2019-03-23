@@ -348,7 +348,7 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 			grid.append(sf::Vertex(sf::Vector2f(rX, rY + 15.f), sf::Color::Yellow));
 
 			pair<unsigned int, unsigned int> curPos = inter.getPosition();
-			newEnvironment.changeTile(curPos.first, curPos.second, 2);
+			newEnvironment.changeTile(curPos.first, curPos.second, 4);
 		}
 		else
 		{
@@ -750,7 +750,7 @@ interactable abmSimulator::findInteractableAt(std::pair<unsigned int, unsigned i
 bool abmSimulator::isSign(Environment e, unsigned int x, unsigned int y)
 {
 	vector<vector<unsigned int>> g = e.getEnvironmentGrid();
-	if (g[x][y] == 2)
+	if (g[x][y] == 4)
 	{
 		for each (interactable i in this->interactableContainer)
 		{
@@ -782,9 +782,36 @@ void abmSimulator::updateAgentList(tgui::Gui & gui, vector<agent> agentCont)
 	
 }
 
-void abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
+agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 {
 	//Evaluate the agents current condition.
+	string obj = a.getObjective();
+	//Agent has a target, dont need to do anything.
+	if (a.getTarget().first != 0 && a.getTarget().second != 0)
+	{
+		return a;
+	}
+
+	pair<unsigned int, unsigned int> target;
+	for(int i = 0; i < 5; i++)
+	{
+		
+		interactable intertar;
+		if ( obj == "FIND_SIGN" && intertar.getDescription() == "SIGN")
+		{
+			target = BFSforCell(environment, a, 4);
+			intertar = findInteractableAt(target);
+			a.setTarget(intertar.getDesination().first, intertar.getDesination().second);
+			return a;
+		}
+		else if (obj == "FIND_EXIT" && intertar.getDescription() == "ESCAPE")
+		{
+			target = BFSforCell(environment, a, 2);
+			intertar = findInteractableAt(target);
+			a.setTarget(intertar.getDesination().first, intertar.getDesination().second);
+			return a;
+		}
+	}
 
 	//Evaluate what is around the agent.
 	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
@@ -818,6 +845,8 @@ void abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 			}
 		}
 	}
+
+	return a;
 }
 
 void abmSimulator::setAgentContainer(vector<agent> input)
@@ -852,30 +881,18 @@ void abmSimulator::runSimulation()
 		//This update cycle is only for non-crowd agents. This function would need to be extended to work with crowds.
 		for each (agent a in localCont)
 		{
-			string obj = a.getObjective();
+			
 			unsigned int x = a.getPosition().first;
 			unsigned int y = a.getPosition().second;
 			unsigned short objCode = 2; 
 			unsigned int searchRange = 0;
 			pair<unsigned int, unsigned int> target = agentContainer.at(count).getTarget();
 
-			evaluatePositionAndObjectives(environment, a);
+			a = evaluatePositionAndObjectives(environment, a);
+			string obj = a.getObjective();
 
 			if (obj == "FIND_SIGN")
 			{
-				//Look for a sign
-				for (int l = 0; l >= 5; l++)
-				{
-					pair<unsigned int, unsigned int> t = BFSforCell(environment, a, 2);
-					a.setTarget(t.first, t.second);
-					interactable inter = findInteractableAt(a.getTarget());
-
-					if (inter.getDescription() == "SIGN")
-					{
-						break;
-					}
-				}
-				
 				
 				//Check if the agent is near their target.
 				for (int i = 0; i <= 7; i++)
@@ -883,7 +900,7 @@ void abmSimulator::runSimulation()
 					int curRow = x + (searchRange + rowNum[i]);
 					int curCol = y + (searchRange + colNum[i]);
 
-					if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 2)
+					if (isValidCell(curRow, curCol) && grid[curRow][curCol] == 4)
 					{
 						//Find out what the interactable near them is.
 						interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
@@ -922,8 +939,13 @@ void abmSimulator::runSimulation()
 							//Check which side the agent is on.
 							if (x > curRow)
 							{
+								if (!isValidCell(curRow + 1, curCol))
+								{
+									//Up agains the boarder of the environment, so it should be an exit.
+									break;
+								}
 								//check if exit is clear
-								if ((grid[curRow - 1][curCol] == 2) || (grid[curRow - 1][curCol] == 0))
+								else if ((grid[curRow - 1][curCol] == 2) || (grid[curRow - 1][curCol] == 0))
 								{
 									//Clear the current tile.
 									environment.changeTile(x, y, 0);
@@ -937,7 +959,12 @@ void abmSimulator::runSimulation()
 							}
 							else if (x < curRow)
 							{
-								if ((grid[curRow + 1][curCol] == 2) || (grid[curRow + 1][curCol] == 0))
+								if (!isValidCell(curRow+1, curCol))
+								{
+									//Up agains the boarder of the environment, so it should be an exit.
+									break;
+								}
+								else if ((grid[curRow + 1][curCol] == 2) || (grid[curRow + 1][curCol] == 0))
 								{
 									//Clear the current tile.
 									environment.changeTile(x, y, 0);
@@ -1064,6 +1091,7 @@ void abmSimulator::runSimulation()
 						environment.changeTile(curRow, curCol, 3);
 						localCont.at(count).setPosition(curRow, curCol);
 						move = false;
+						break;
 					}
 					//Move through a sign.
 					else if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && isSign(environment, curRow, curCol))
@@ -1074,6 +1102,7 @@ void abmSimulator::runSimulation()
 						environment.changeTile(curRow, curCol, 3);
 						localCont.at(count).setPosition(curRow, curCol);
 						move = false;
+						break;
 					}
 					else if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol] == 1))
 					{
@@ -1085,6 +1114,7 @@ void abmSimulator::runSimulation()
 							environment.changeTile(curRow +1, curCol, 3);
 							localCont.at(count).setPosition(curRow+1, curCol);
 							move = false;
+							break;
 						}
 						else if (x < curRow)
 						{
@@ -1094,6 +1124,7 @@ void abmSimulator::runSimulation()
 							environment.changeTile(curRow - 1, curCol, 3);
 							localCont.at(count).setPosition(curRow - 1, curCol);
 							move = false;
+							break;
 						}
 						
 						
