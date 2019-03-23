@@ -123,6 +123,7 @@ int abmSimulator::run()
 			simState.setString("Simulation running");
 			runSimulation();
 			clock.restart();
+			updateAgentList(gui, this->agentContainer);
 		}
 		
 		//Simulation state message.
@@ -146,10 +147,7 @@ int abmSimulator::run()
 			if (!executed)
 			{
 				executed = true;
-				for each(agent a in agentContainer)
-				{
-					addAgentToList(gui, a);
-				}
+				updateAgentList(gui, this->agentContainer);
 			}
 			
 		}
@@ -766,13 +764,22 @@ bool abmSimulator::isSign(Environment e, unsigned int x, unsigned int y)
 	return false;
 }
 
-void abmSimulator::addAgentToList(tgui::Gui & gui, agent a)
+void abmSimulator::updateAgentList(tgui::Gui & gui, vector<agent> agentCont)
 {
-	
 	tgui::ListBox::Ptr list = gui.get<tgui::ListBox>("agentContainerList");
-	string id = std::to_string(a.getEnityID());
-
-	list->addItem(id);
+	string entry = "";
+	string id = "";
+	string position = "";
+	list->removeAllItems();
+	for each (agent a in agentCont)
+	{
+		id = " " + std::to_string(a.getEnityID());
+		position = "(" + std::to_string(a.getPosition().first) + ", " + std::to_string(a.getPosition().second) + ")";
+		entry = id + " " + position;
+		list->addItem(entry);
+	}
+	
+	
 }
 
 void abmSimulator::setAgentContainer(vector<agent> input)

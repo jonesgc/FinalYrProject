@@ -151,12 +151,13 @@ public:
 	bool isSign(Environment, unsigned int, unsigned int);
 
 	/*
-	\fn addAgentToList(tgui::Gui&, agent)
+	\fn updateAgentToList(tgui::Gui&, std::vector<agent>)
 	\brief Adds an agent ID to the list of agents in the agent container.
 	\param gui pointer of witch the listbox is within.
-	\param the agent to be added.
+	\param the container of agents which need to be recorded in the list.
 	*/
-	void addAgentToList(tgui::Gui&, agent);
+	void updateAgentList(tgui::Gui&, std::vector<agent>);
+
 
 private:
 	Environment environment;

@@ -1,11 +1,11 @@
 ﻿  abmSimulator.cpp
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(121): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(595): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(690): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(693): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(862): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(877): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(989): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(998): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(750): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(593): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(688): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(691): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(871): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(886): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(998): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1007): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(748): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe
