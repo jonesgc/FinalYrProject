@@ -440,7 +440,7 @@ void abmSimulator::loadSimulation()
 	json item;
 
 	//Get the path for opening the file.
-	file.open("D:\\dev\\project\\test.json");
+	file.open("D:\\dev\\project\\test2.json");
 	if (file.is_open()) 
 	{
 		//The prototype will only feature very basic error checking of the JSON.
@@ -782,6 +782,44 @@ void abmSimulator::updateAgentList(tgui::Gui & gui, vector<agent> agentCont)
 	
 }
 
+void abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
+{
+	//Evaluate the agents current condition.
+
+	//Evaluate what is around the agent.
+	int rowNum[] = { -1, -1, -1, 0, 1, 0, 1, 1 };
+	int colNum[] = { 0, -1, 1, -1, -1, 1, 0, 1 };
+
+	unsigned int x = a.getPosition().first;
+	unsigned int y = a.getPosition().second;
+	unsigned int searchRange = 0;
+
+	vector<vector<unsigned int>> g = e.getEnvironmentGrid();
+	//Check if the agent is near their target.
+	for (int i = 0; i <= 7; i++)
+	{
+		int curRow = x + (searchRange + rowNum[i]);
+		int curCol = y + (searchRange + colNum[i]);
+
+		if (isValidCell(curRow, curCol) && g[curRow][curCol] == 2)
+		{
+			//Find out what the interactable near them is.
+			interactable inter = findInteractableAt(std::make_pair(curRow, curCol));
+			string descr = inter.getDescription();
+
+			if (descr == "ESCAPE")
+			{
+				a.setObjective("FIND_EXIT");
+			}
+			else if (descr == "SIGN")
+			{
+				a.setObjective("FIND_EXIT");
+				a.setTarget(inter.getDesination().first, inter.getDesination().second);
+			}
+		}
+	}
+}
+
 void abmSimulator::setAgentContainer(vector<agent> input)
 {
 	agentContainer = input;
@@ -821,8 +859,24 @@ void abmSimulator::runSimulation()
 			unsigned int searchRange = 0;
 			pair<unsigned int, unsigned int> target = agentContainer.at(count).getTarget();
 
+			evaluatePositionAndObjectives(environment, a);
+
 			if (obj == "FIND_SIGN")
 			{
+				//Look for a sign
+				for (int l = 0; l >= 5; l++)
+				{
+					pair<unsigned int, unsigned int> t = BFSforCell(environment, a, 2);
+					a.setTarget(t.first, t.second);
+					interactable inter = findInteractableAt(a.getTarget());
+
+					if (inter.getDescription() == "SIGN")
+					{
+						break;
+					}
+				}
+				
+				
 				//Check if the agent is near their target.
 				for (int i = 0; i <= 7; i++)
 				{
@@ -898,14 +952,44 @@ void abmSimulator::runSimulation()
 						}
 						else if (ori == 1)
 						{
-							//Door is vertical. So ejection/entry areas are on the y axis.
-							//Clear the current tile.
-							environment.changeTile(x, y, 0);
+							if (y > curCol)
+							{
+								if (!isValidCell(curRow, curCol - 1))
+								{
+									//Up agains the boarder of the environment, so it should be an exit.
+									break;
+								}
+								//check if exit is clear
+								else if ((grid[curRow][curCol -1] == 2) || (grid[curRow][curCol -1] == 0))
+								{
+									//Clear the current tile.
+									environment.changeTile(x, y, 0);
 
-							//Move the agent to the new tile.
-							environment.changeTile(curRow, curCol + 1, 3);
-							localCont.at(count).setPosition(curRow, curCol + 1);
-							
+									//Move the agent to the new tile.
+									environment.changeTile(curRow, curCol - 1, 3);
+									localCont.at(count).setPosition(curRow , curCol -1);
+									localCont.at(count).setObjective("FIND_SIGN");
+								}
+							}
+							else if (y < curCol)
+							{
+								//check if exit is clear
+								if (!isValidCell(curRow, curCol + 1))
+								{
+									//Up agains the boarder of the environment, so it should be an exit.
+									break;
+								}
+								else if ((grid[curRow][curCol+1] == 2) || (grid[curRow][curCol+1] == 0))
+								{
+									//Clear the current tile.
+									environment.changeTile(x, y, 0);
+
+									//Move the agent to the new tile.
+									environment.changeTile(curRow, curCol+1, 3);
+									localCont.at(count).setPosition(curRow , curCol+1);
+									localCont.at(count).setObjective("FIND_SIGN");
+								}
+							}
 						}
 					}
 				}

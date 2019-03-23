@@ -3,9 +3,11 @@ d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(121): warning C424
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(593): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(688): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(691): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(871): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(886): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(998): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1007): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(923): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(938): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(955): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(974): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1080): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1089): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(748): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe

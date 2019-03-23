@@ -158,6 +158,13 @@ public:
 	*/
 	void updateAgentList(tgui::Gui&, std::vector<agent>);
 
+	/*
+	\fn evaluatePositionAndObjectives(Environment, agent)
+	\brief The agent evaluates their current position and objectives and decides what to do next. This function sets the agents next objective.
+	\param the environment to be be used to check the agents surroundings.
+	\param the agent of which the function is relevant to.
+	*/
+	void evaluatePositionAndObjectives(Environment, agent);
 
 private:
 	Environment environment;
