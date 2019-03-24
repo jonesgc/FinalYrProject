@@ -22,6 +22,7 @@ public:
 	std::string getObjective();
 	std::pair<float, float> getRposition();
 	bool getCoperative();
+	short getIdleTime();
 
 	//Setters.
 	void setAge(unsigned short);
@@ -32,6 +33,7 @@ public:
 	void setObjective(std::string);
 	void setRposition(float, float);
 	void setCoperative(bool);
+	void setIdleTime(short);
 
 private:
 	unsigned short age;
@@ -43,6 +45,7 @@ private:
 	std::string objective;
 	std::pair<float, float> rPosition;
 	bool coperative;
+	short idleTime;
 };
 
 

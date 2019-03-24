@@ -63,6 +63,11 @@ bool agent::getCoperative()
 	return false;
 }
 
+short agent::getIdleTime()
+{
+	return idleTime;
+}
+
 void agent::setAge(unsigned short)
 {
 }
@@ -96,4 +101,9 @@ void agent::setRposition(float x, float y)
 
 void agent::setCoperative(bool)
 {
+}
+
+void agent::setIdleTime(short i)
+{
+	idleTime = i;
 }

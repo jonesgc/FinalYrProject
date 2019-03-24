@@ -811,7 +811,6 @@ agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 			a.setTarget(intertar.getDesination().first, intertar.getDesination().second);
 			return a;
 		}
-		
 	}
 
 	//Evaluate what is around the agent.
@@ -897,7 +896,7 @@ void abmSimulator::runSimulation()
 			unsigned int searchRange = 0;
 			pair<unsigned int, unsigned int> target = agentContainer.at(count).getTarget();
 
-			a = evaluatePositionAndObjectives(environment, a);
+			//a = evaluatePositionAndObjectives(environment, a);
 			string obj = a.getObjective();
 
 			if (obj == "FIND_SIGN")
@@ -909,6 +908,7 @@ void abmSimulator::runSimulation()
 				if (target.first != 0 && target.second != 0)
 				{
 					localCont.at(count).setObjective("FIND_EXIT");
+					objCode = 2;
 					move = true;
 				}
 
@@ -929,6 +929,7 @@ void abmSimulator::runSimulation()
 							pair<unsigned int, unsigned int> dest = inter.getDesination();
 							localCont.at(count).setTarget(dest.first, dest.second);
 							localCont.at(count).setObjective("FIND_EXIT");
+							objCode = 2;
 							move = true;
 							break;
 						}
@@ -950,6 +951,14 @@ void abmSimulator::runSimulation()
 
 						string desc = inter.getDescription();
 						unsigned short ori = inter.getOrientation();
+						//Agent is looking for a door and finds an exit, go through it.
+						if (desc == "ESCAPE")
+						{
+							this->escapedAgentsContainer.push_back(localCont.at(count));
+							move = false;
+							remove.push_back(a.getEnityID());
+							break;
+						}
 						//If its a door go through it
 						if (ori == 0)
 						{
@@ -957,7 +966,7 @@ void abmSimulator::runSimulation()
 							//Check which side the agent is on.
 							if (x > curRow)
 							{
-								if (!isValidCell(curRow + 1, curCol))
+								if (!isValidCell(curRow -1, curCol))
 								{
 									//Up agains the boarder of the environment, so it should be an exit.
 									break;
@@ -972,6 +981,8 @@ void abmSimulator::runSimulation()
 									environment.changeTile(curRow - 1, curCol, 3);
 									localCont.at(count).setPosition(curRow - 1, curCol);
 									localCont.at(count).setObjective("FIND_SIGN");
+									objCode = 4;
+									break;
 								}
 
 							}
@@ -991,6 +1002,8 @@ void abmSimulator::runSimulation()
 									environment.changeTile(curRow + 1, curCol, 3);
 									localCont.at(count).setPosition(curRow + 1, curCol);
 									localCont.at(count).setObjective("FIND_SIGN");
+									objCode = 4;
+									break;
 								}
 							}
 							
@@ -1014,6 +1027,8 @@ void abmSimulator::runSimulation()
 									environment.changeTile(curRow, curCol - 1, 3);
 									localCont.at(count).setPosition(curRow , curCol -1);
 									localCont.at(count).setObjective("FIND_SIGN");
+									objCode = 4;
+									break;
 								}
 							}
 							else if (y < curCol)
@@ -1033,6 +1048,8 @@ void abmSimulator::runSimulation()
 									environment.changeTile(curRow, curCol+1, 3);
 									localCont.at(count).setPosition(curRow , curCol+1);
 									localCont.at(count).setObjective("FIND_SIGN");
+									objCode = 4;
+									break;
 								}
 							}
 						}
@@ -1122,25 +1139,48 @@ void abmSimulator::runSimulation()
 						move = false;
 						break;
 					}
+					//Move to the side of terrain whilst moving towards the target. This needs to be expanded to account for the Y axis.
 					else if (isValidCell(curRow, curCol) && (gridImage[curRow][curCol] == 9) && (grid[curRow][curCol] == 1))
 					{
-						if (x > curRow)
+						//Evaluate where the impassible terrain is.
+						
+						if (x > curRow && y == curCol)
 						{
 							//Clear the current tile.
 							environment.changeTile(x, y, 0);
 
-							environment.changeTile(curRow +1, curCol, 3);
-							localCont.at(count).setPosition(curRow+1, curCol);
+							environment.changeTile(curRow -1, curCol, 3);
+							localCont.at(count).setPosition(curRow-1, curCol);
 							move = false;
 							break;
 						}
-						else if (x < curRow)
+						else if (x < curRow && y == curCol)
 						{
 							//Clear the current tile.
 							environment.changeTile(x, y, 0);
 
-							environment.changeTile(curRow - 1, curCol, 3);
-							localCont.at(count).setPosition(curRow - 1, curCol);
+							environment.changeTile(curRow + 1, curCol, 3);
+							localCont.at(count).setPosition(curRow + 1, curCol);
+							move = false;
+							break;
+						}
+						else if (x == curRow && y > curCol)
+						{
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							environment.changeTile(curRow, curCol -1, 3);
+							localCont.at(count).setPosition(curRow, curCol -1);
+							move = false;
+							break;
+						}
+						else if (x < curRow && y > curCol)
+						{
+							//Clear the current tile.
+							environment.changeTile(x, y, 0);
+
+							environment.changeTile(curRow + 1, curCol - 1, 3);
+							localCont.at(count).setPosition(curRow + 1, curCol - 1);
 							move = false;
 							break;
 						}
@@ -1150,6 +1190,13 @@ void abmSimulator::runSimulation()
 				}
 			}
 			
+			if (!move)
+			{
+				short idle = localCont.at(count).getIdleTime() + 1;
+				localCont.at(count).setIdleTime(idle);
+			}
+
+
 			eCopy = this->environment;
 			this->agentContainer = localCont;
 			drawAgents();
