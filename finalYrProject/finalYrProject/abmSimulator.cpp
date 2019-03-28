@@ -1055,10 +1055,8 @@ void abmSimulator::runSimulation()
 						}
 					}
 				}
-				//Move to try find the door.
+				//Carry on moving.
 				move = true;
-				//Evaluate Objective.
-				//curObjective = "FIND_SIGN";
 			}
 			else if (obj == "FIND_EXIT")
 			{

@@ -1,14 +1,18 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
+
+/*! \file environment.h
+Author: Gregory Jones
+Version: 0.1
+\brief  Class header file. Environment object that contains the grid that the agents will move within and the interactable entities.
+*/
+
+
 #include"SFML/Graphics.hpp"
 
 #include <utility>
 #include <vector>
 
-
-
-//This class represents the environment that the simulation will take place in.
-//Due to the possible sized of the environment grid this class should always be dynamically allocated.
 class Environment
 {
 public:
@@ -16,8 +20,6 @@ public:
 	Environment(unsigned int, unsigned int);
 	~Environment();
 	
-	//Getters and Setters.
-	//The environment grid is created within the constructor.
 	std::pair<unsigned int, unsigned int> getHazardEmitterLoc();
 	unsigned short getHazardSpeed();
 	std::vector<std::vector<unsigned int>> getEnvironmentGrid();
@@ -31,8 +33,13 @@ public:
 	void setRenderedInter(sf::VertexArray);
 
 
-	//This function will allow a "tile" value to be changed. This can be used in a number of functions.
-	//For example this could be used to move an agent by changing the value from 0 (empty) to 3(agent)
+	/*
+	\fn void changeTile(unsigned int, unsigned int, unsigned short);
+	\brief This function will allow a "tile" value to be changed. This is priamrily used in movement of agents.
+	\param x coordinate of the tile to be changed.
+	\param y coordinate of the tile to be changed.
+	\param The code of which to change the tile value to.
+	*/
 	void changeTile(unsigned int, unsigned int, unsigned short);
 
 private:

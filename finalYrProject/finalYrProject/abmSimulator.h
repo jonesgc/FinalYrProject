@@ -7,12 +7,6 @@ Version: 0.1
 \brief  Class header file. Core class of the program, containing the: main program loop (run()), event loop and render loop.
 */
 
-/*
-	\fn
-	\brief
-	\param
-*/
-
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 
@@ -58,8 +52,7 @@ public:
 	/*
 	\fn void mainScreenGUI(tgui::Gui&)
 	\brief Creates the GUI elements and widgets of the "main" screen which is what the user sees when they first start the program.
-	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this function.
-
+	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this functio.
 	*/
 	void mainScreenGUI(tgui::Gui&);
 
@@ -69,9 +62,6 @@ public:
 	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this function.
 	*/
 	void createSimulationScreen(tgui::Gui&);
-
-	void createSimulationSaveFile();
-	void createStatisticsFile();
 
 	/*
 	\fn loadSimulation()
@@ -101,6 +91,7 @@ public:
 	\fn loadSimulation()
 	\brief When the load simulation button on the mainScreen is pressed this function is called that would take the input of a file path then loads the file. Note the file must be in the specific JSON format as documented.
 	@see simulationFile
+	\return Vector of circle shapes representing agents in the correct position ready to be drawn.
 	*/
 	std::vector<sf::CircleShape>drawAgents();
 
@@ -109,6 +100,7 @@ public:
 	\brief Checks if the input co-ordinates are within the bounds of the two dimentional vector being used as the "grid".
 	\param x co-ordinate
 	\param y co-ordinate
+	\return True if the cell is within the bounds of the environment grid.
 	*/
 	bool isValidCell(int,int);
 
@@ -122,6 +114,7 @@ public:
 	\param targetX the X co-ordinate of the target or end vertex.
 	\param targetY the Y co-ordinate of the target or end vertex.
 	\param objCode the value with which to change the tiles on the grid through the course of the line.
+	\return An environment object that contains a modified grid with the "drawn" line.
 	*/
 	Environment bresenhamLine(Environment,unsigned int, unsigned int, unsigned int, unsigned int, unsigned short);
 
@@ -132,6 +125,7 @@ public:
 	\param environment the environment to perform the BFS on.
 	\param agent this agent is used as the starting point for the BFS search.
 	\param objCode the value that the BFS stops when it finds on the grid and returns its (X,Y) position.
+	\return Co-ordinates of nearest cell matching the input requested.
 	*/
 	std::pair<unsigned int, unsigned int> BFSforCell(Environment, agent, unsigned short);
 	
@@ -139,6 +133,7 @@ public:
 	\fn findInteractableAt(std::pair<unsigned int, unsigned int>)
 	\breif Iterates through the interactables container and finds the interactable at the input co-ordiniates and returns it.
 	\param co-ords a pair of unsigned integers denoting X and Y co-ordiniate to be used as the search parameter.
+	\return the Interactable object found.
 	*/
 	interactable findInteractableAt(std::pair<unsigned int, unsigned int>);
 
@@ -147,6 +142,7 @@ public:
 	\brief Checks if the input co-ordinates are a sign or not, this is so agents can move through signs.
 	\param the environment on which to check the target cell.
 	\param co-ordinates containting the x,y positions on the grid of the cell to be checked.
+	\return true or false whether the input co-ordinates is a sign or not.
 	*/
 	bool isSign(Environment, unsigned int, unsigned int);
 
@@ -163,6 +159,7 @@ public:
 	\brief The agent evaluates their current position and objectives and decides what to do next. This function sets the agents next objective.
 	\param the environment to be be used to check the agents surroundings.
 	\param the agent of which the function is relevant to.
+	\return an agent object
 	*/
 	agent evaluatePositionAndObjectives(Environment, agent);
 

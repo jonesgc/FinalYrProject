@@ -7,10 +7,15 @@ d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(967): warning C401
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(989): warning C4018: '<': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1013): warning C4018: '>': signed/unsigned mismatch
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1034): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1147): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1157): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1167): warning C4018: '>': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1177): warning C4018: '<': signed/unsigned mismatch
-d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1177): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1145): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1155): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1165): warning C4018: '>': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1175): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(1175): warning C4018: '>': signed/unsigned mismatch
+  environment.cpp
+d:\dev\project\finalyrproject\finalyrproject\environment.cpp(19): warning C4018: '<': signed/unsigned mismatch
+d:\dev\project\finalyrproject\finalyrproject\environment.cpp(22): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+  Generating Code...
 d:\dev\project\finalyrproject\finalyrproject\abmsimulator.cpp(748): warning C4715: 'abmSimulator::findInteractableAt': not all control paths return a value
   finalYrProject.vcxproj -> D:\dev\project\finalYrProject\x64\Debug\finalYrProject.exe
