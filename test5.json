@@ -1,0 +1,13 @@
+{
+    "environment":{
+        "gridX":20,
+        "gridY":20,
+        "terrain":{
+        },
+        "interactables":{
+        },
+        "hazard":[]
+    },
+    "agents":{
+    }
+}

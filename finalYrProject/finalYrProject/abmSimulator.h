@@ -64,11 +64,11 @@ public:
 	void createSimulationScreen(tgui::Gui&);
 
 	/*
-	\fn loadSimulation()
-	\brief Loads a JSON file, which must be in the correct format, into the program then calls createSimulation() with the read in values as parameters. 
-			This does require a path to be fed into the function, but this will come from a GUI element.
+	\fn loadSimulation(tgui::EditBox::Ptr)
+	\brief Loads a JSON file, which must be in the correct format, into the program then calls createSimulation() with the read in values as parameters.
+	\param an editbox element containing the path for the file to be loaded.
 	*/
-	void loadSimulation();
+	void loadSimulation(tgui::EditBox::Ptr);
 
 	/*
 	\fn void createSimulation(unsigned int, unsigned int, std::vector<agent>, std::vector<std::pair<unsigned int, unsigned int>>, std::vector<interactable>);
@@ -162,6 +162,13 @@ public:
 	\return an agent object
 	*/
 	agent evaluatePositionAndObjectives(Environment, agent);
+
+	/*
+	\fn getPath(tgui::Gui&)
+	\brief This function creates a prompt for the user to input a file path for a simulation to be loaded.
+	\param pointer to the gui so the elements can be added.
+	*/
+	void getPath(tgui::Gui&);
 
 private:
 	Environment environment;

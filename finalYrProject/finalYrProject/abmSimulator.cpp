@@ -131,6 +131,8 @@ int abmSimulator::run()
 		{
 			//Simulation Ready but not running.
 			simState.setString("Simulation ready");
+			gui.remove(gui.get("pathInput"));
+			gui.remove(gui.get("pathSubmit"));
 			
 		}
 		else if (!simReady && agentContainer.empty() && loaded)
@@ -208,7 +210,7 @@ void abmSimulator::mainScreenGUI(tgui::Gui & gui)
 
 	//Button actions.
 	runSim->connect("pressed", &abmSimulator::runSimulation, this);
-	loadSim->connect("pressed", &abmSimulator::loadSimulation, this);
+	loadSim->connect("pressed", &abmSimulator::getPath, this, std::ref(gui));
 }
 
 
@@ -421,10 +423,10 @@ void abmSimulator::createSimulation(unsigned int gridX, unsigned int gridY,
 
 //Load the given simulation file via the path and run the creation of the simulation.
 //Code for opening and reading a JSON file adapted from: https://github.com/nlohmann/json
-void abmSimulator::loadSimulation()
+void abmSimulator::loadSimulation(tgui::EditBox::Ptr editBox)
 {
 	std::ifstream file;
-	std::string path = "test.txt";
+	std::string path = editBox->getText();
 
 	json j;
 	json jEnv;
@@ -440,7 +442,7 @@ void abmSimulator::loadSimulation()
 	json item;
 
 	//Get the path for opening the file.
-	file.open("D:\\dev\\project\\test2.json");
+	file.open(path);
 	if (file.is_open()) 
 	{
 		//The prototype will only feature very basic error checking of the JSON.
@@ -855,6 +857,24 @@ agent abmSimulator::evaluatePositionAndObjectives(Environment e, agent a)
 	}
 
 	return a;
+}
+
+void abmSimulator::getPath(tgui::Gui& gui)
+{
+	tgui::EditBox::Ptr pathInput = tgui::EditBox::create();
+	pathInput->setSize({ "200", "50" });
+	pathInput->setPosition({ "500", "500" });
+	pathInput->setDefaultText("Enter path");
+	gui.add(pathInput, "pathInput");
+
+	tgui::Button::Ptr submit = tgui::Button::create();
+	submit->setSize({ "50", "20" });
+	submit->setPosition({ "700", "500" });
+	submit->setText("Submit");
+	gui.add(submit, "pathSubmit");
+
+
+	submit->connect("pressed", &abmSimulator::loadSimulation, this, pathInput);
 }
 
 void abmSimulator::setAgentContainer(vector<agent> input)
