@@ -1,6 +1,14 @@
 #ifndef INTERACTABLE_H
 #define INTERACTABLE_H
 
+/*!
+\file interactable.h
+Author: Gregory Jones
+Version: 0.1
+\brief Class header file. Contains mostly getters and setter member functions.
+*/
+
+
 #include "entity.h"
 #include <string>
 

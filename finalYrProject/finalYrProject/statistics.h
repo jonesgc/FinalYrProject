@@ -1,6 +1,11 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
+/*! \file statistics.h
+	Author: Gregory Jones
+	Version: N/A - work in progress.
+	\breif Class header file. Work in progress - can be considered just a frame work.
+*/
 
 class statistics
 {

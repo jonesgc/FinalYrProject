@@ -42,35 +42,35 @@ public:
 	void setAgentContainer(std::vector<agent>);
 	void setEditorOutline(sf::VertexArray);
 
-	/*
+	/*!
 	\fn int run()
-	\breif The run function is the main loop of the program, so it contains the SFML render loop, SFML and TGUI event loop and the main program loop.
+	\brief The run function is the main loop of the program, so it contains the SFML render loop, SFML and TGUI event loop and the main program loop.
 	\param Takes no parmeters but utilises various member variables.
 	*/
 	int run();
 
-	/*
+	/*!
 	\fn void mainScreenGUI(tgui::Gui&)
 	\brief Creates the GUI elements and widgets of the "main" screen which is what the user sees when they first start the program.
 	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this functio.
 	*/
 	void mainScreenGUI(tgui::Gui&);
 
-	/*
+	/*!
 	\fn void createSimulationScreen(tgui::Gui&)
 	\brief Creates the screen for building a new simulation when the new simulation button is pressed.
 	\param Gui& - a pointer to the GUI is required as input for the various TGUI methods within this function.
 	*/
 	void createSimulationScreen(tgui::Gui&);
 
-	/*
+	/*!
 	\fn loadSimulation(tgui::EditBox::Ptr)
 	\brief Loads a JSON file, which must be in the correct format, into the program then calls createSimulation() with the read in values as parameters.
 	\param an editbox element containing the path for the file to be loaded.
 	*/
 	void loadSimulation(tgui::EditBox::Ptr);
 
-	/*
+	/*!
 	\fn void createSimulation(unsigned int, unsigned int, std::vector<agent>, std::vector<std::pair<unsigned int, unsigned int>>, std::vector<interactable>);
 	\brief Sets up a the various member variables and containers (for both the rendered and "data" elements) that a simulation needs to function, this function is called after a simluation setup file has been read in.
 	\param gridX The number of rows in the environment.
@@ -81,13 +81,13 @@ public:
 	*/
 	void createSimulation(unsigned int, unsigned int, std::vector<agent>, std::vector<std::pair<unsigned int, unsigned int>>, std::vector<interactable>);
 
-	/*
+	/*!
 	\fn runSimulation()
 	\brief This function is called periodically by run() and it is used to perform the simulation logic: such as moving agents, updating states or expanding the hazard.
 	*/
 	void runSimulation();
 
-	/*
+	/*!
 	\fn loadSimulation()
 	\brief When the load simulation button on the mainScreen is pressed this function is called that would take the input of a file path then loads the file. Note the file must be in the specific JSON format as documented.
 	@see simulationFile
@@ -95,7 +95,7 @@ public:
 	*/
 	std::vector<sf::CircleShape>drawAgents();
 
-	/*
+	/*!
 	\fn isValidCell(int, int)
 	\brief Checks if the input co-ordinates are within the bounds of the two dimentional vector being used as the "grid".
 	\param x co-ordinate
@@ -104,7 +104,7 @@ public:
 	*/
 	bool isValidCell(int,int);
 
-	/*
+	/*!
 	\fn bresenhamLine(Environment, unsigned int, unsigned int, unsigned int, unsigned int, unsigned short)
 	\brief Draws a line from input co-ordinates to target co-ordinates on the input environment. "Draws" or rather replaces the values on the grid of the object code input.
 			This code was adapted from:
@@ -118,7 +118,7 @@ public:
 	*/
 	Environment bresenhamLine(Environment,unsigned int, unsigned int, unsigned int, unsigned int, unsigned short);
 
-	/*
+	/*!
 	\fn BFSforCell(Environment, agent, unsigned short)
 	\brief This is a breadth first search algorithm that searches the grid looking for the input target value and returns its location.
 			This code was adapted from:
@@ -129,7 +129,7 @@ public:
 	*/
 	std::pair<unsigned int, unsigned int> BFSforCell(Environment, agent, unsigned short);
 	
-	/*
+	/*!
 	\fn findInteractableAt(std::pair<unsigned int, unsigned int>)
 	\breif Iterates through the interactables container and finds the interactable at the input co-ordiniates and returns it.
 	\param co-ords a pair of unsigned integers denoting X and Y co-ordiniate to be used as the search parameter.
@@ -137,7 +137,7 @@ public:
 	*/
 	interactable findInteractableAt(std::pair<unsigned int, unsigned int>);
 
-	/*
+	/*!
 	\fn isSign(std::pair<unsigned int, unsigned int>)
 	\brief Checks if the input co-ordinates are a sign or not, this is so agents can move through signs.
 	\param the environment on which to check the target cell.
@@ -146,7 +146,7 @@ public:
 	*/
 	bool isSign(Environment, unsigned int, unsigned int);
 
-	/*
+	/*!
 	\fn updateAgentToList(tgui::Gui&, std::vector<agent>)
 	\brief Adds an agent ID to the list of agents in the agent container.
 	\param gui pointer of witch the listbox is within.
@@ -154,7 +154,7 @@ public:
 	*/
 	void updateAgentList(tgui::Gui&, std::vector<agent>);
 
-	/*
+	/*!
 	\fn evaluatePositionAndObjectives(Environment, agent)
 	\brief The agent evaluates their current position and objectives and decides what to do next. This function sets the agents next objective.
 	\param the environment to be be used to check the agents surroundings.
@@ -163,7 +163,7 @@ public:
 	*/
 	agent evaluatePositionAndObjectives(Environment, agent);
 
-	/*
+	/*!
 	\fn getPath(tgui::Gui&)
 	\brief This function creates a prompt for the user to input a file path for a simulation to be loaded.
 	\param pointer to the gui so the elements can be added.

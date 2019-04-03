@@ -655,7 +655,7 @@ Environment abmSimulator::bresenhamLine(Environment env,unsigned int x1, unsigne
 	}
 	
 	return env;
-}
+}	
 
 //BFS adapted from https://www.geeksforgeeks.org/shortest-path-in-a-binary-maze/.
 pair<unsigned int, unsigned int> abmSimulator::BFSforCell(Environment env, agent a, unsigned short oc)

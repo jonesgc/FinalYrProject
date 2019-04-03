@@ -1,6 +1,12 @@
 #ifndef AGENT_H
 #define AGENT_H
 
+/*!
+	\file agent.h
+	Author: Gregory Jones
+	Version: 0.1
+	\brief Class header file. This file contains mostly getters and setters for an agent, the constructor is the most important element of this class.
+*/
 #include "entity.h"
 #include <string>
 #include <utility>

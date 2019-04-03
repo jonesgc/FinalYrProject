@@ -1,6 +1,12 @@
 #ifndef CROWD_H
 #define CROWD_H
 
+/*! \file crowd.h
+	Author: Gregory Jones
+	Version: N/A - work in progress.
+	\breif Class header file. Work in progress - can be considered just a frame work.
+*/
+
 #include <vector>
 #include <string>
 
